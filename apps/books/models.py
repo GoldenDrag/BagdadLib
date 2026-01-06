@@ -1,4 +1,7 @@
+import datetime
+
 from django.db import models
+from django.utils import timezone
 
 
 
@@ -16,6 +19,9 @@ class Book(Base):
     name = models.CharField(max_length=64, unique=True)
     # cover = models.ImageField()
     description = models.TextField()
+    
+    def __str__(self):
+        return self.name
 
 
 
@@ -26,11 +32,20 @@ class Chapter(Base):
 
     class Meta:
         unique_together = ('book', 'name',)
+    
+    def __str__(self):
+        return f"Chapter {self.name} of {self.book.name}"
+    
+    def was_published_recently(self):
+        return self.created_at >= timezone.now() - datetime.timedelta(days=3)
 
 
 class Paragraph(models.Model):
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
     content = models.JSONField()
+
+    def __str__(self):
+        return f"Paragraph {self.pk} of {self.chapter}"
 
 
     # BELOW IS FORUM PART OF THE APP
