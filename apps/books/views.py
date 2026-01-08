@@ -1,23 +1,29 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
+from django.template import loader
 
 from .models import Book
 
 
 def index(request):
-    books = Book.objects[:5]
-    result = (", ").join([book.name for book in books])
-    return HttpResponse(f"Here are our top books: {result}")
+    books = Book.objects.order_by("-created_at")[:5]
+    template = loader.get_template("index.html")
+    context = {"books": books}
+    return HttpResponse(template.render(context, request))
 
 
 def latest(request):
     latest_updated_books = Book.objects.order_by("-updated_at")[:10]
-    result = (", ").join([book.name for book in latest_updated_books])
-    return HttpResponse(f"Here is latest updated works: {result}")
+    context = {"books": latest_updated_books}
+    return render(request, "latest.html", context)
 
 
 def detail(request, book_id):
-    return HttpResponse(f"Here is info about {book_id}")
+    try:
+        book = Book.objects.get(pkl=book_id)
+    except Book.DoesNotExist:
+        raise Http404("Book does not exist")
+    return render(request, "detail.html", {"book": book})
 
 
 def read(request, chapter_id):

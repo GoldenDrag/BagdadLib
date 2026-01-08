@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>Latest updates</title>
+  </head>
+  <body>
+    <h1>Latest Updates</h1>
+    <hr>
+    {% if books %}
+    <ul>
+    {% for book in books %}
+        <li><a href="/books/{{ book.id }}/">{{ book.name }}</a></li>
+    {% endfor %}
+    </ul>
+    {% else %}
+        <p>No books are available.</p>
+    {% endif %}
+  </body>
+</html>
