@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404
 from django.template import loader
 
-from .models import Book
+from .models import Book, Chapter
 
 
 def index(request):
@@ -20,11 +20,12 @@ def latest(request):
 
 def detail(request, book_id):
     try:
-        book = Book.objects.get(pkl=book_id)
+        book = Book.objects.get(pk=book_id)
     except Book.DoesNotExist:
         raise Http404("Book does not exist")
     return render(request, "detail.html", {"book": book})
 
 
 def read(request, chapter_id):
-    return HttpResponse(f"Here is contents of a chapter {chapter_id}")
+    chapter = get_object_or_404(Chapter, pk=chapter_id)
+    return render(request, "read.html", {"chapter": chapter})
