@@ -38,7 +38,10 @@ def upload_book(request:HttpRequest):
     if request.method == "POST":
         form = UploadBookForm(request.POST, request.FILES)
         if form.is_valid():
-            id = handle_book_upload(request.FILES["file"])
+            id = handle_book_upload(
+                form.title,
+                form.description,
+                request.FILES["file"],)
             return (HttpResponseRedirect(f"/{id}"))
     else:
         form = UploadBookForm()
